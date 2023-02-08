@@ -2,7 +2,7 @@ node {
 
     checkout scm
 
-    docker.withRegistry('https://tomjfrog.jfrog.io/artifactory/dockerociexamples-docker', 'jenkins-username-and-password') {
+    docker.withRegistry('https://tomjfrog.jfrog.io/artifactory/api/docker/dockerociexamples-docker', 'jenkins-username-and-password') {
 
         def myImage = docker.build('tomjfrog.jfrog.io/dockerociexamples-dev/fat-manifest:latest')
 
