@@ -1,14 +1,15 @@
-node {
-    def rtServer = Artifactory.newServer url: SERVER_URL, credentialsId: CREDENTIALS
-//     def rtDocker= Artifactory.docker server: rtServer, host: "tcp://127.0.0.1:1234"
+def rtServer = Artifactory.newServer url: SERVER_URL, credentialsId: CREDENTIALS
+    def rtDocker= Artifactory.docker server: rtServer, host: "tcp://127.0.0.1:1234"
     def buildName = "fat-manifest-example"
     def buildInfo = Artifactory.newBuildInfo()
     buildInfo.env.capture = true
     server.connection.timeout = 20
 
+node {
+
     stage ('Cleanup') {
-            cleanWs()
-        }
+        cleanWs()
+    }
 
     stage ('Checkout') {
         checkout scm
@@ -19,7 +20,7 @@ node {
                 tagDockerApp = "${ART_DOCKER_REGISTRY}/fat-manifest-example:${env.BUILD_NUMBER}"
                 docker.build(tagDockerApp)
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: CREDENTIALS, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-//                     rtDocker = Artifactory.docker server: rtServer
+                    rtDocker = Artifactory.docker server: rtServer
                     println "Docker Push"
                     rtDocker.push(tagDockerApp, REPO, buildInfo)
                     println "Docker Publish: " + buildInfo
