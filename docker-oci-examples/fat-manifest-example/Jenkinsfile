@@ -1,9 +1,9 @@
 def rtServer = Artifactory.newServer url: SERVER_URL, credentialsId: CREDENTIALS
-def rtDocker= Artifactory.docker server: rtServer, host: "tcp://127.0.0.1:1234"
-def buildName = "fat-manifest-example"
-def buildInfo = Artifactory.newBuildInfo()
-buildInfo.env.capture = true
-server.connection.timeout = 20
+// def rtDocker= Artifactory.docker server: rtServer, host: "tcp://127.0.0.1:1234"
+// def buildName = "fat-manifest-example"
+// def buildInfo = Artifactory.newBuildInfo()
+// buildInfo.env.capture = true
+// server.connection.timeout = 20
 
 node {
 
