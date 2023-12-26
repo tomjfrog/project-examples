@@ -1,0 +1,93 @@
+/*
+ * Copyright (C) 2013 JFrog Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+buildscript {
+    repositories {
+        mavenCentral()
+        dependencies {
+            classpath(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '4.+')
+        }
+    }
+}
+
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: "com.jfrog.artifactory"
+    configure(subprojects.findAll { new File(it.projectDir, 'src').directory }) {
+        apply plugin: 'java'
+    }
+    group = 'org.jfrog.example.gradle'
+    version = currentVersion
+    status = 'Integration'
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+//  apply plugin: 'maven'
+
+    if (project.plugins.hasPlugin('java')) {
+        //manifest.mainAttributes(provider: 'gradle')
+        manifest {
+            attributes 'provider': 'gradle'
+        }
+        configurations {
+            published
+        }
+        dependencies {
+            testImplementation 'junit:junit:4.7'
+        }
+        task sourceJar(type: Jar) {
+            from sourceSets.main.allSource
+            classifier = 'sources'
+        }
+        task javadocJar(type: Jar, dependsOn: javadoc) {
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+        artifacts {
+            published sourceJar
+            published javadocJar
+        }
+    }
+}
+
+configurations {
+    published
+}
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+    publish {
+        repository {
+            repoKey = 'gradle_example-gradle-dev-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'gradleexample-dev'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+    }
+}
