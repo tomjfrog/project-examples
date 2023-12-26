@@ -25,6 +25,7 @@ buildscript {
 
 allprojects {
     apply plugin: 'idea'
+    apply plugin: "com.jfrog.artifactory"
     configure(subprojects.findAll { new File(it.projectDir, 'src').directory }) {
         apply plugin: 'java'
     }
@@ -67,4 +68,26 @@ subprojects {
 
 configurations {
     published
+}
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+    publish {
+        repository {
+            repoKey = 'gradle_example-gradle-dev-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'gradleexample-dev'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+    }
 }

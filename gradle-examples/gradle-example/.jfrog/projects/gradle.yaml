@@ -1,0 +1,10 @@
+version: 1
+type: gradle
+resolver:
+  repo: mavencentral-remote
+  serverId: tomjfrog.jfrog.io
+deployer:
+  repo: demo-gradle
+  serverId: tomjfrog.jfrog.io
+  artifactPattern: '[organization]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]'
+useWrapper: true
